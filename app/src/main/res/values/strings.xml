@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">github-users</string>
+    <string name="title_home">首頁</string>
+    <string name="title_profile">個人</string>
+</resources>
