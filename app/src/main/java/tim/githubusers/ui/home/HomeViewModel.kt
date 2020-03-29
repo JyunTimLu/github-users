@@ -15,11 +15,7 @@ class HomeViewModel(
     private val scheduler: SchedulerProvider
 ) : BaseViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
-
+    val usersList by lazy { ArrayList<User>() }
 
     fun getUsers(): MutableLiveData<List<User>> {
         val onUsersLoadedEvent = MutableLiveData<List<User>>()
@@ -37,6 +33,7 @@ class HomeViewModel(
                     }
 
                     override fun onNext(t: List<User>) {
+                        usersList.addAll(t)
                         onUsersLoadedEvent.postValue(t)
                         Log.d("Debug", t.toString())
                     }
