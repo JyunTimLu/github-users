@@ -22,8 +22,13 @@ class HomeFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(this, Observer {
+        homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
+        })
+        homeViewModel.getUsers().observe(viewLifecycleOwner, Observer {
+            it?.let {
+
+            }
         })
         return root
     }

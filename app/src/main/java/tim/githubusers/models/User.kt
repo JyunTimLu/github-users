@@ -7,5 +7,6 @@ data class User(
     val id: Int,
     val login: String,
     val subscriptions_url: String,
-    val type: String
+    val type: String,
+    val location: String
 )

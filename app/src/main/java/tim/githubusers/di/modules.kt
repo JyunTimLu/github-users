@@ -1,15 +1,16 @@
 package tim.githubusers.di
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import okhttp3.mockwebserver.MockWebServer
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import tim.githubusers.api.GithubServices
+import tim.githubusers.api.MockWebDispatcher
 import tim.githubusers.api.SchedulerProvider
+import tim.githubusers.common.Configs
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.ui.home.HomeViewModel
 import tim.githubusers.ui.profile.ProfileViewModel
@@ -21,7 +22,7 @@ val viewModelModules = module {
 }
 
 val networkModules = module {
-    single { createNetworkService<GithubServices>(get(), "https://api.github.com/") }
+    single { createNetworkService<GithubServices>(get(), Configs.BASE_URL) }
     single { createOkHttpClient() }
 }
 
@@ -30,21 +31,27 @@ val repositoryModules = module {
 }
 
 val schedulerModule = module {
-    single { SchedulerProvider()}
+    single { SchedulerProvider() }
 }
 
+val mockWebModule = module {
+    single { MockWebDispatcher() }
+    single { createMockWebServer(get()) }
+}
 
 val diModules = listOf(
     viewModelModules,
     networkModules,
     repositoryModules,
-    schedulerModule
+    schedulerModule,
+    mockWebModule
 )
 
 
 inline fun <reified T> createNetworkService(okHttpClient: OkHttpClient, baseUrl: String): T {
+    val url = Configs.MOCK_API_URL
     return Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(url)
         .client(okHttpClient)
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
@@ -57,4 +64,10 @@ fun createOkHttpClient(): OkHttpClient {
         .connectTimeout(60L, TimeUnit.SECONDS)
         .readTimeout(60L, TimeUnit.SECONDS)
         .build()
+}
+
+fun createMockWebServer(dispatcher: MockWebDispatcher): MockWebServer {
+    val mockWebServer = MockWebServer()
+    mockWebServer.setDispatcher(dispatcher)
+    return mockWebServer
 }

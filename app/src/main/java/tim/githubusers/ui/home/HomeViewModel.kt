@@ -20,12 +20,9 @@ class HomeViewModel(
     }
     val text: LiveData<String> = _text
 
-    init {
-        getUsers()
-    }
 
-
-    fun getUsers() {
+    fun getUsers(): MutableLiveData<List<User>> {
+        val onUsersLoadedEvent = MutableLiveData<List<User>>()
         addDisposable {
             repo.getUsers(0)
                 .with(scheduler)
@@ -40,6 +37,7 @@ class HomeViewModel(
                     }
 
                     override fun onNext(t: List<User>) {
+                        onUsersLoadedEvent.postValue(t)
                         Log.d("Debug", t.toString())
                     }
 
@@ -49,5 +47,6 @@ class HomeViewModel(
 
                 })
         }
+        return onUsersLoadedEvent
     }
 }

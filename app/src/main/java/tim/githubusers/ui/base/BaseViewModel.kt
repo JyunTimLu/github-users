@@ -5,12 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import tim.githubusers.ext.default
 
 abstract class BaseViewModel : ViewModel() {
 
     private val disposables by lazy { CompositeDisposable() }
-    val isLoading = MutableLiveData<Boolean>().default(false)
+    val isLoading = MutableLiveData<Boolean>()
 
     fun addDisposable(job: () -> Disposable) {
         disposables.add(job())

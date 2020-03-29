@@ -21,6 +21,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets {
+        main {
+            assets.srcDir 'src/test/resources'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    dataBinding {
+        enabled true
+    }
 }
 
 dependencies {
@@ -56,6 +75,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
 
     //network
+    implementation 'com.squareup.okhttp3:mockwebserver:3.9.1'
     implementation "com.squareup.retrofit2:retrofit:2.6.4"
     implementation "com.squareup.retrofit2:converter-gson:2.3.0"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.5.0"

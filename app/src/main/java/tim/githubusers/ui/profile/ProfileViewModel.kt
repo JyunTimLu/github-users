@@ -20,15 +20,10 @@ class ProfileViewModel(
     }
     val text: LiveData<String> = _text
 
-    init {
-        getUser()
-    }
-
-
-    private fun getUser() {
-
+    fun getUser(): MutableLiveData<User> {
+        val onUserDataLoadedEvent = MutableLiveData<User>()
         addDisposable {
-            repo.getUser(6395079).with(scheduler).with(scheduler)
+            repo.getUser(6395079).with(scheduler)
                 .subscribeWith(object : DisposableObserver<User>() {
 
                     override fun onStart() {
@@ -40,6 +35,7 @@ class ProfileViewModel(
                     }
 
                     override fun onNext(t: User) {
+                        onUserDataLoadedEvent.postValue(t)
                         Log.d("Debug", t.toString())
                     }
 
@@ -49,6 +45,6 @@ class ProfileViewModel(
 
                 })
         }
-
+        return onUserDataLoadedEvent
     }
 }
