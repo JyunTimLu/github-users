@@ -1,49 +1,35 @@
 package tim.githubusers.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.observers.DisposableObserver
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import tim.githubusers.api.SchedulerProvider
-import tim.githubusers.ext.with
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.models.User
 import tim.githubusers.ui.base.BaseViewModel
 
 class HomeViewModel(
-    private val repo: GithubRepository,
-    private val scheduler: SchedulerProvider
+    repo: GithubRepository,
+    scheduler: SchedulerProvider
 ) : BaseViewModel() {
 
-    val usersList by lazy { ArrayList<User>() }
+    val usersList: LiveData<PagedList<User>>
+    val throwableEvent = MutableLiveData<Throwable>()
+    private val pageSize = 15
 
-    fun getUsers(): MutableLiveData<List<User>> {
-        val onUsersLoadedEvent = MutableLiveData<List<User>>()
-        addDisposable {
-            repo.getUsers(0)
-                .with(scheduler)
-                .subscribeWith(object : DisposableObserver<List<User>>() {
+    private val dataSourceFactory: UserDataSourceFactory =
+        UserDataSourceFactory(disposables, repo, scheduler, throwableEvent)
 
-                    override fun onStart() {
-                        isLoading.value = true
-                    }
+    init {
 
-                    override fun onComplete() {
-                        isLoading.value = true
-                    }
+        val config = PagedList.Config.Builder()
+            .setPageSize(pageSize)
+            .setInitialLoadSizeHint(pageSize * 2)
+            .setEnablePlaceholders(false)
+            .build()
 
-                    override fun onNext(t: List<User>) {
-                        usersList.addAll(t)
-                        onUsersLoadedEvent.postValue(t)
-                        Log.d("Debug", t.toString())
-                    }
+        usersList = LivePagedListBuilder<Long, User>(dataSourceFactory, config).build()
 
-                    override fun onError(e: Throwable) {
-                        isLoading.value = false
-                    }
-
-                })
-        }
-        return onUsersLoadedEvent
     }
 }

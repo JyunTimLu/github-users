@@ -9,7 +9,7 @@ import tim.githubusers.models.User
 interface GithubServices {
 
     @GET("users")
-    fun getUsers(@Query("since") since: Int): Observable<List<User>>
+    fun getUsers(@Query("since") since: Long, @Query("per_page") perPage: Int): Observable<List<User>>
 
     @GET("users/{id}")
     fun getUser(@Path("id") id: Int): Observable<User>

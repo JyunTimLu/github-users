@@ -8,7 +8,7 @@ import io.reactivex.disposables.Disposable
 
 abstract class BaseViewModel : ViewModel() {
 
-    private val disposables by lazy { CompositeDisposable() }
+    val disposables by lazy { CompositeDisposable() }
     val isLoading = MutableLiveData<Boolean>()
 
     fun addDisposable(job: () -> Disposable) {
