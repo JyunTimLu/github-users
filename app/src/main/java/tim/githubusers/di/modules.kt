@@ -49,9 +49,8 @@ val diModules = listOf(
 
 
 inline fun <reified T> createNetworkService(okHttpClient: OkHttpClient, baseUrl: String): T {
-    val url = Configs.MOCK_API_URL
     return Retrofit.Builder()
-        .baseUrl(url)
+        .baseUrl(baseUrl)
         .client(okHttpClient)
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
