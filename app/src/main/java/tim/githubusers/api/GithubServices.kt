@@ -11,7 +11,7 @@ interface GithubServices {
     @GET("users")
     fun getUsers(@Query("since") since: Long, @Query("per_page") perPage: Int): Observable<List<User>>
 
-    @GET("users/{id}")
-    fun getUser(@Path("id") id: Int): Observable<User>
+    @GET("users/{userName}")
+    fun getUser(@Path("userName") userName: String): Observable<User>
 
 }

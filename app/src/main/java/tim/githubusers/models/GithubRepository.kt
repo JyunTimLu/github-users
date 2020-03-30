@@ -9,8 +9,8 @@ class GithubRepository(private val githubServices: GithubServices) {
         return githubServices.getUsers(since, perPage)
     }
 
-    fun getUser(id: Int): Observable<User> {
-        return githubServices.getUser(id)
+    fun getUser(userName: String): Observable<User> {
+        return githubServices.getUser(userName)
     }
 
 }

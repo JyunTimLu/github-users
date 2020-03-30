@@ -23,7 +23,7 @@ class ProfileViewModel(
     fun getUser(): MutableLiveData<User> {
         val onUserDataLoadedEvent = MutableLiveData<User>()
         addDisposable {
-            repo.getUser(6395079).with(scheduler)
+            repo.getUser("JyunTimLu").with(scheduler)
                 .subscribeWith(object : DisposableObserver<User>() {
 
                     override fun onStart() {
