@@ -27,11 +27,9 @@ class ProfileViewModel(
                 .subscribeWith(object : DisposableObserver<User>() {
 
                     override fun onStart() {
-                        isLoading.value = true
                     }
 
                     override fun onComplete() {
-                        isLoading.value = false
                     }
 
                     override fun onNext(t: User) {
@@ -40,7 +38,6 @@ class ProfileViewModel(
                     }
 
                     override fun onError(e: Throwable) {
-                        isLoading.value = false
                     }
 
                 })
