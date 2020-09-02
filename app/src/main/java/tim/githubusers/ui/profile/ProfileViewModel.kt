@@ -3,8 +3,6 @@ package tim.githubusers.ui.profile
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.liveData
 import io.reactivex.observers.DisposableObserver
 import kotlinx.coroutines.runBlocking
 import tim.githubusers.api.SchedulerProvider
