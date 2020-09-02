@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.android.ext.android.inject
@@ -29,15 +30,15 @@ class HomeFragment : Fragment() {
 
         usersAdapter = UsersAdapter()
         recycler_view.adapter = usersAdapter
-        homeViewModel.usersList.observe(viewLifecycleOwner, Observer {
+        homeViewModel.usersList.observe(viewLifecycleOwner) {
             usersAdapter.submitList(it)
-        })
+        }
 
-        homeViewModel.throwableEvent.observe(viewLifecycleOwner, Observer {
+        homeViewModel.throwableEvent.observe(viewLifecycleOwner) {
             it?.let {
                 Snackbar.make(root_view, it.toString(), Snackbar.LENGTH_LONG)
                     .show()
             }
-        })
+        }
     }
 }

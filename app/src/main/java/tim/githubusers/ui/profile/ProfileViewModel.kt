@@ -3,7 +3,10 @@ package tim.githubusers.ui.profile
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.liveData
 import io.reactivex.observers.DisposableObserver
+import kotlinx.coroutines.runBlocking
 import tim.githubusers.api.SchedulerProvider
 import tim.githubusers.ext.with
 import tim.githubusers.models.GithubRepository
@@ -20,10 +23,10 @@ class ProfileViewModel(
     }
     val text: LiveData<String> = _text
 
-    fun getUser(): MutableLiveData<User> {
+    fun getUser(): LiveData<User> {
         val onUserDataLoadedEvent = MutableLiveData<User>()
         addDisposable {
-            repo.getUser("JyunTimLu").with(scheduler)
+            repo.getUser("timlu33").with(scheduler)
                 .subscribeWith(object : DisposableObserver<User>() {
 
                     override fun onStart() {
@@ -34,10 +37,10 @@ class ProfileViewModel(
 
                     override fun onNext(t: User) {
                         onUserDataLoadedEvent.postValue(t)
-                        Log.d("Debug", t.toString())
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.d("TAG", e.toString())
                     }
 
                 })
