@@ -2,6 +2,7 @@ package tim.githubusers.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ItemKeyedDataSource
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tim.githubusers.models.GithubRepository
@@ -14,26 +15,19 @@ class UsersDataSource(
     private val coroutineScope: CoroutineScope
 ) : ItemKeyedDataSource<Long, User>() {
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, e -> throwableEvent.postValue(e) }
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<User>) {
-        coroutineScope.launch {
-            try {
-                val users = githubRepository.getUsers(1, params.requestedLoadSize)
-                callback.onResult(users)
-            } catch (e: Exception) {
-                throwableEvent.postValue(e)
-            }
+        coroutineScope.launch(exceptionHandler) {
+            val users = githubRepository.getUsers(1, params.requestedLoadSize)
+            callback.onResult(users)
         }
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<User>) {
-        coroutineScope.launch {
-            try {
-                val users = githubRepository.getUsers(params.key, params.requestedLoadSize)
-                callback.onResult(users)
-            } catch (e: Exception) {
-                throwableEvent.postValue(e)
-            }
+        coroutineScope.launch(exceptionHandler) {
+            val users = githubRepository.getUsers(params.key, params.requestedLoadSize)
+            callback.onResult(users)
         }
     }
 
