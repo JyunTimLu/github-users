@@ -2,24 +2,23 @@ package tim.githubusers.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import tim.githubusers.api.SchedulerProvider
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.models.User
-import tim.githubusers.ui.base.BaseViewModel
 
 class HomeViewModel(
-    repo: GithubRepository,
-    scheduler: SchedulerProvider
-) : BaseViewModel() {
+    repo: GithubRepository
+) : ViewModel() {
 
     val usersList: LiveData<PagedList<User>>
     val throwableEvent = MutableLiveData<Throwable>()
     private val pageSize = 15
 
     private val dataSourceFactory: UserDataSourceFactory =
-        UserDataSourceFactory(disposables, repo, scheduler, throwableEvent)
+        UserDataSourceFactory(repo, throwableEvent, viewModelScope)
 
     init {
 

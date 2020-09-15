@@ -2,26 +2,23 @@ package tim.githubusers.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
-import io.reactivex.disposables.CompositeDisposable
-import tim.githubusers.api.SchedulerProvider
+import kotlinx.coroutines.CoroutineScope
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.models.User
 
 class UserDataSourceFactory(
-    private val compositeDisposable: CompositeDisposable,
     private val githubRepository: GithubRepository,
-    private val scheduler: SchedulerProvider,
-    private val throwableEvent: MutableLiveData<Throwable>
+    private val throwableEvent: MutableLiveData<Throwable>,
+    private val coroutineScope: CoroutineScope
 ) : DataSource.Factory<Long, User>() {
 
     private val usersDataSourceLiveData = MutableLiveData<UsersDataSource>()
 
     override fun create(): DataSource<Long, User> {
         val usersDataSource = UsersDataSource(
-            compositeDisposable = compositeDisposable,
             githubRepository = githubRepository,
-            scheduler = scheduler,
-            throwableEvent = throwableEvent
+            throwableEvent = throwableEvent,
+            coroutineScope = coroutineScope
         )
         usersDataSourceLiveData.postValue(usersDataSource)
         return usersDataSource

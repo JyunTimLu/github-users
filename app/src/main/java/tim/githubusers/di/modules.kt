@@ -7,12 +7,9 @@ import okhttp3.mockwebserver.MockWebServer
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import tim.githubusers.api.GithubServices
 import tim.githubusers.api.MockWebDispatcher
-import tim.githubusers.api.SchedulerProvider
 import tim.githubusers.common.Configs
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.ui.home.HomeViewModel
@@ -20,8 +17,8 @@ import tim.githubusers.ui.profile.ProfileViewModel
 import java.util.concurrent.TimeUnit
 
 val viewModelModules = module {
-    viewModel { HomeViewModel(get(), get()) }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
 }
 
 val networkModules = module {
@@ -33,10 +30,6 @@ val repositoryModules = module {
     single { GithubRepository(get()) }
 }
 
-val schedulerModule = module {
-    single { SchedulerProvider() }
-}
-
 val mockWebModule = module {
     single { MockWebDispatcher() }
     single { createMockWebServer(get()) }
@@ -46,7 +39,6 @@ val diModules = listOf(
     viewModelModules,
     networkModules,
     repositoryModules,
-    schedulerModule,
     mockWebModule
 )
 
@@ -56,8 +48,7 @@ inline fun <reified T> createNetworkService(okHttpClient: OkHttpClient, baseUrl:
     return Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .addConverterFactory(MoshiConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
         .create(T::class.java)
 }

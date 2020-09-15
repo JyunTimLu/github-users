@@ -2,42 +2,39 @@ package tim.githubusers.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.ItemKeyedDataSource
-import io.reactivex.disposables.CompositeDisposable
-import tim.githubusers.api.SchedulerProvider
-import tim.githubusers.ext.with
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import tim.githubusers.models.GithubRepository
 import tim.githubusers.models.User
+import kotlin.Exception
 
 class UsersDataSource(
     private val githubRepository: GithubRepository,
-    private val compositeDisposable: CompositeDisposable,
-    private val scheduler: SchedulerProvider,
-    private val throwableEvent: MutableLiveData<Throwable>
+    private val throwableEvent: MutableLiveData<Throwable>,
+    private val coroutineScope: CoroutineScope
 ) : ItemKeyedDataSource<Long, User>() {
 
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<User>) {
-        compositeDisposable.add(
-            githubRepository.getUsers(1, params.requestedLoadSize)
-                .with(scheduler)
-                .subscribe({
-                    callback.onResult(it)
-                }, {
-                    throwableEvent.postValue(it)
-                })
-        )
+        coroutineScope.launch {
+            try {
+                val users = githubRepository.getUsers(1, params.requestedLoadSize)
+                callback.onResult(users)
+            } catch (e: Exception) {
+                throwableEvent.postValue(e)
+            }
+        }
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<User>) {
-        compositeDisposable.add(
-            githubRepository.getUsers(params.key, params.requestedLoadSize)
-                .with(scheduler)
-                .subscribe({
-                    callback.onResult(it)
-                }, {
-                    throwableEvent.postValue(it)
-                })
-        )
+        coroutineScope.launch {
+            try {
+                val users = githubRepository.getUsers(params.key, params.requestedLoadSize)
+                callback.onResult(users)
+            } catch (e: Exception) {
+                throwableEvent.postValue(e)
+            }
+        }
     }
 
     override fun loadBefore(params: LoadParams<Long>, callback: LoadCallback<User>) {

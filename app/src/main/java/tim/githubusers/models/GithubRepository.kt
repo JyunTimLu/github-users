@@ -1,15 +1,14 @@
 package tim.githubusers.models
 
-import io.reactivex.Observable
 import tim.githubusers.api.GithubServices
 
 class GithubRepository(private val githubServices: GithubServices) {
 
-    fun getUsers(since: Long, perPage: Int): Observable<List<User>> {
+    suspend fun getUsers(since: Long, perPage: Int): List<User> {
         return githubServices.getUsers(since, perPage)
     }
 
-    fun getUser(userName: String): Observable<User> {
+    suspend fun getUser(userName: String): User {
         return githubServices.getUser(userName)
     }
 
