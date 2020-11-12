@@ -7,3 +7,8 @@ sealed class ResultOf<out T> {
         val throwable: Throwable?
     ): ResultOf<Nothing>()
 }
+
+data class BaseResp<T>(
+    val data: T,
+    val message: String?
+)
